@@ -43,10 +43,12 @@ const LandingPageSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
-  amenities: {
-    type: [String],
-    required: true,
-  },
+  amenities: [
+    {
+      text: { type: String, required: true }, // Text field for the amenity
+      image: { type: String, required: true }, // URL of the uploaded image
+    },
+  ],
   themeColor: {
     type: String,
     required: true,

@@ -1,10 +1,9 @@
 const express = require("express");
+const { getAllLandingPage, AddLandingPage } = require("../controllers/landingpage-controller");
 const router = express.Router();
+const { upload } = require("../middleware/upload-images");
 
-router.get("/", (req, res) => {
-  res.status(200).json({
-    message: "success message",
-  });
-});
+router.get("/", getAllLandingPage);
+router.post("/add", upload, AddLandingPage);
 
 module.exports = router;
