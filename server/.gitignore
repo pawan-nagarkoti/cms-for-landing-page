@@ -27,3 +27,7 @@ coverage/
 # Temporary files
 *.tmp
 *.bak
+
+
+public/uploads/*
+!public/uploads/.gitkeep

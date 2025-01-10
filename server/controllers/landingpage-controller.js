@@ -46,9 +46,9 @@ const AddLandingPage = async (req, res) => {
     const galleryFiles = req.files.filter((f) => f.fieldname === "gallery");
     const galleryImagesArray = galleryFiles.map((file) => ({
       imageUrl: `${baseUrl}/${file.filename}`,
-      createdAt: new Date(),
+      // createdAt: new Date(),
     }));
-    console.log(galleryImagesArray);
+    console.log(galleryFiles);
     const amenitiesData = [];
     // Extract amenities text from req.body
     const amenitiesText = req.body.amenities;

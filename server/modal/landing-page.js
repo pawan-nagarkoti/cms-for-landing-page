@@ -42,7 +42,7 @@ const LandingPageSchema = new mongoose.Schema({
   gallery: [
     {
       imageUrl: { type: String, required: true, trim: true }, // Image URL for the gallery
-      createdAt: { type: Date, default: Date.now }, // Optional metadata
+      // createdAt: { type: Date, default: Date.now }, // Optional metadata
     },
   ],
   amenities: [
