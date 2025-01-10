@@ -39,10 +39,12 @@ const LandingPageSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  gallery: {
-    type: [String],
-    required: true,
-  },
+  gallery: [
+    {
+      imageUrl: { type: String, required: true, trim: true }, // Image URL for the gallery
+      createdAt: { type: Date, default: Date.now }, // Optional metadata
+    },
+  ],
   amenities: [
     {
       text: { type: String, required: true }, // Text field for the amenity
