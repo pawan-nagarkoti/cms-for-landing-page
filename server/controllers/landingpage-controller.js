@@ -142,6 +142,7 @@ const deleteLandingPage = async (req, res) => {
 const updateLandingPage = async (req, res) => {
   try {
     const updatedId = req.params.id;
+    const { galleryId } = req.body; // Array of gallery IDs
 
     // Check if ID is provided
     if (!updatedId) {
@@ -154,7 +155,7 @@ const updateLandingPage = async (req, res) => {
     const baseUrl = `${req.protocol}://${req.get("host")}/uploads`;
 
     // Destructure body data
-    const { headerItem, headingOne, headingOneDescription, headingTwo, headingTwoList, themeColor, amenities } = req.body;
+    const { headerItem, headingOne, headingOneDescription, headingTwo, headingTwoList, themeColor } = req.body;
 
     // Prepare update data object
     const updateData = {
@@ -162,7 +163,7 @@ const updateLandingPage = async (req, res) => {
       headingOne,
       headingOneDescription,
       headingTwo,
-      headingTwoList: headingTwoList ? headingTwoList.split(",") : undefined, // Split comma-separated list
+      headingTwoList,
       themeColor,
     };
 
@@ -183,59 +184,70 @@ const updateLandingPage = async (req, res) => {
         updateData.headingTwoImage = `${baseUrl}/${headingTwoFile.filename}`;
       }
 
-      const galleryImagesArray = [];
-      const filterGalleryImagesFromFiles = req.files.filter((f) => f.fieldname === "gallery");
-      console.log(filterGalleryImagesFromFiles);
-      filterGalleryImagesFromFiles.forEach((file) => {
-        galleryImagesArray.push(`${baseUrl}/${file.filename}`);
-      });
-      if (galleryImagesArray.length > 0) {
-        updateData.gallery = galleryImagesArray;
-      }
-    }
-
-    // Handle amenities update
-    if (amenities && Array.isArray(amenities)) {
-      const updatedAmenities = [];
-      const amenitiesFiles = req.files.filter((f) => /^amenities\[\d+\]\[image\]$/.test(f.fieldname));
-
-      amenities.forEach((amenity, index) => {
-        const parsedAmenity = JSON.parse(amenity); // Ensure amenities text is parsed if sent as a string
-        const imageFile = amenitiesFiles.find((file) => file.fieldname === `amenities[${index}][image]`);
-        const imageUrl = imageFile ? `${baseUrl}/${imageFile.filename}` : parsedAmenity.image || null; // Keep existing image if no new file is uploaded
-
-        // Validate and add to updated amenities array
-        if (parsedAmenity.text && imageUrl) {
-          updatedAmenities.push({
-            text: parsedAmenity.text,
-            image: imageUrl,
-          });
+      let containerGalleryImages = null;
+      for (let i = 0; i < galleryId.length; i++) {
+        const galleryFile = req.files.find((file) => file.fieldname === `gallery[${i}]`);
+        let storeChangeImageUrl = null;
+        if (galleryFile) {
+          storeChangeImageUrl = `${baseUrl}/${galleryFile.filename}`;
         }
-      });
 
-      if (updatedAmenities.length > 0) {
-        updateData.amenities = updatedAmenities;
+        const result = await landingPage.findOneAndUpdate(
+          { _id: updatedId, "gallery._id": req.body.galleryId[i] }, // Match landing page and gallery item by ID
+          { $set: { "gallery.$.imageUrl": storeChangeImageUrl } }, // Update the `imageUrl` of the matched item
+          {
+            new: true,
+          }
+        );
+
+        if (result && result.gallery) {
+          containerGalleryImages = result.gallery; // Update container with the latest gallery
+        }
       }
-    }
+      updateData.gallery = containerGalleryImages;
 
-    // Update the landing page in the database
-    const updatedPage = await landingPage.findByIdAndUpdate(
-      updatedId,
-      { $set: updateData },
-      { new: true } // Return updated document
-    );
+      // Handle amenities update
+      // if (amenities && Array.isArray(amenities)) {
+      //   const updatedAmenities = [];
+      //   const amenitiesFiles = req.files.filter((f) => /^amenities\[\d+\]\[image\]$/.test(f.fieldname));
 
-    // If no landing page found
-    if (!updatedPage) {
-      return res.status(404).json({
-        message: "Landing page not found",
-      });
+      //   amenities.forEach((amenity, index) => {
+      //     const parsedAmenity = JSON.parse(amenity); // Ensure amenities text is parsed if sent as a string
+      //     const imageFile = amenitiesFiles.find((file) => file.fieldname === `amenities[${index}][image]`);
+      //     const imageUrl = imageFile ? `${baseUrl}/${imageFile.filename}` : parsedAmenity.image || null; // Keep existing image if no new file is uploaded
+
+      //     // Validate and add to updated amenities array
+      //     if (parsedAmenity.text && imageUrl) {
+      //       updatedAmenities.push({
+      //         text: parsedAmenity.text,
+      //         image: imageUrl,
+      //       });
+      //     }
+      //   });
+
+      //   if (updatedAmenities.length > 0) {
+      //     updateData.amenities = updatedAmenities;
+      //   }
+      // }
+
+      // Update the landing page in the database
+      // const updatedPage = await landingPage.findByIdAndUpdate(
+      //   updatedId,
+      //   { $set: updateData },
+      //   { new: true } // Return updated document
+      // );
+
+      // If no landing page found
+      // if (!updatedPage) {
+      //   return res.status(404).json({
+      //     message: "Landing page not found",
+      //   });
     }
 
     // Respond with updated data
     res.status(200).json({
       success: true,
-      data: updatedPage,
+      data: updateData,
       message: "Landing page updated successfully",
     });
   } catch (error) {
@@ -246,10 +258,25 @@ const updateLandingPage = async (req, res) => {
   }
 };
 
+const deleteAllPages = async (req, res) => {
+  try {
+    const result = await landingPage.deleteMany({});
+    res.status(200).json({
+      message: "all landing pages are deleted",
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      message: "something is wrong",
+    });
+  }
+};
+
 module.exports = {
   getAllLandingPage,
   AddLandingPage,
   getSingleLandingPage,
   deleteLandingPage,
   updateLandingPage,
+  deleteAllPages,
 };
