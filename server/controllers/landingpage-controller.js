@@ -206,42 +206,27 @@ const updateLandingPage = async (req, res) => {
       }
       updateData.gallery = containerGalleryImages;
 
-      // Handle amenities update
-      // if (amenities && Array.isArray(amenities)) {
-      //   const updatedAmenities = [];
-      //   const amenitiesFiles = req.files.filter((f) => /^amenities\[\d+\]\[image\]$/.test(f.fieldname));
+      let containerForAmenties = null;
+      for (let i = 0; i <= req.body.amenities.length; i++) {
+        const amenitiesFiles = req.files.find((file) => file.fieldname === `amenities[${i}][image]`);
 
-      //   amenities.forEach((amenity, index) => {
-      //     const parsedAmenity = JSON.parse(amenity); // Ensure amenities text is parsed if sent as a string
-      //     const imageFile = amenitiesFiles.find((file) => file.fieldname === `amenities[${index}][image]`);
-      //     const imageUrl = imageFile ? `${baseUrl}/${imageFile.filename}` : parsedAmenity.image || null; // Keep existing image if no new file is uploaded
+        let containerForSingleAmenitiesData = null;
+        if (amenitiesFiles) {
+          containerForSingleAmenitiesData = `${baseUrl}/${amenitiesFiles.filename}`;
+        }
 
-      //     // Validate and add to updated amenities array
-      //     if (parsedAmenity.text && imageUrl) {
-      //       updatedAmenities.push({
-      //         text: parsedAmenity.text,
-      //         image: imageUrl,
-      //       });
-      //     }
-      //   });
-
-      //   if (updatedAmenities.length > 0) {
-      //     updateData.amenities = updatedAmenities;
-      //   }
-      // }
-
-      // Update the landing page in the database
-      // const updatedPage = await landingPage.findByIdAndUpdate(
-      //   updatedId,
-      //   { $set: updateData },
-      //   { new: true } // Return updated document
-      // );
-
-      // If no landing page found
-      // if (!updatedPage) {
-      //   return res.status(404).json({
-      //     message: "Landing page not found",
-      //   });
+        const result = await landingPage.findOneAndUpdate(
+          { _id: updatedId, "amenities._id": req.body.amenitiesId[i] }, // Match landing page and gallery item by ID
+          { $set: { "amenities.$.image": containerForSingleAmenitiesData, "amenities.$.text": req.body.amenities[i]?.text } }, // Update the `imageUrl` of the matched item
+          {
+            new: true,
+          }
+        );
+        if (result && result.amenities) {
+          containerForAmenties = result.amenities;
+        }
+      }
+      updateData.amenities = containerForAmenties;
     }
 
     // Respond with updated data
