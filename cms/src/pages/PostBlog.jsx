@@ -25,6 +25,7 @@ export default function PostBlog() {
   const [previewLogoImages, setPreviewLogoImages] = useState(null);
   const [previewBannerImages, setPreviewBannerImages] = useState(null);
   const [previewHeadingTwoImages, setPreviewHeadingTwoImages] = useState(null);
+  const [previewGalleryImages, setPreviewGalleryImages] = useState([]);
 
   const handleChange = (key) => (e) => {
     switch (e.target.name) {
@@ -38,6 +39,12 @@ export default function PostBlog() {
 
       case "headingTwoImages":
         setPreviewHeadingTwoImages(URL.createObjectURL(e.target.files[0]));
+        break;
+
+      case "galleryImages":
+        for (let i = 0; i < e.target.files.length; i++) {
+          setPreviewGalleryImages((pre) => [...pre, URL.createObjectURL(e.target.files[i])]);
+        }
       default:
         break;
     }
@@ -151,7 +158,23 @@ export default function PostBlog() {
             </div>
           )}
 
-          <CustomUploadImage label="Gallery" />
+          <CustomUploadImage label="Gallery" name="galleryImages" multiple onChange={handleChange("galleryImages")} />
+          {previewGalleryImages.length > 0 && (
+            <div className="mt-4 mb-3">
+              <p className="text-sm text-gray-600">Image Preview:</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
+                {previewGalleryImages.map((g, i) => (
+                  <div key={i} className="relative">
+                    <img src={g} alt="Uploaded Preview" className="w-full h-64 object-cover rounded-md border border-gray-300" />
+                    <button className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow hover:bg-red-600">
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center space-x-4">
             <CustomInput label="Amenties" type="text" placeholder="amenities name" />
             <CustomUploadImage label="" className="mt-4" />
