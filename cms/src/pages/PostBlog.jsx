@@ -21,7 +21,27 @@ export default function PostBlog() {
   const [listItem, setListItem] = useState(null);
   const [storedNavListItem, setStoredNavListItem] = useState([]);
 
+  // preview images
+  const [previewLogoImages, setPreviewLogoImages] = useState(null);
+  const [previewBannerImages, setPreviewBannerImages] = useState(null);
+  const [previewHeadingTwoImages, setPreviewHeadingTwoImages] = useState(null);
+
   const handleChange = (key) => (e) => {
+    switch (e.target.name) {
+      case "logo":
+        setPreviewLogoImages(URL.createObjectURL(e.target.files[0]));
+        break;
+
+      case "bannerImage":
+        setPreviewBannerImages(URL.createObjectURL(e.target.files[0]));
+        break;
+
+      case "headingTwoImages":
+        setPreviewHeadingTwoImages(URL.createObjectURL(e.target.files[0]));
+      default:
+        break;
+    }
+
     const value = e.target.type === "file" ? e.target.files[0] : e.target.value;
     setFormData({ ...formData, [key]: value });
   };
@@ -48,7 +68,14 @@ export default function PostBlog() {
         <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-800 my-6">Landing Page Post</h1>
 
         <form onSubmit={handleSubmit}>
-          <CustomUploadImage label="Logo" onChange={handleChange("logo")} />
+          <CustomUploadImage label="Logo" name="logo" onChange={handleChange("logo")} />
+          {previewLogoImages && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600">Image Preview:</p>
+              <img src={previewLogoImages} alt="Uploaded Preview" className="mt-2 mb-2 w-64 h-64 object-cover rounded-md border border-gray-300" />
+            </div>
+          )}
+
           <div className="flex items-center space-x-4">
             <CustomInput
               label="Header Menu Items"
@@ -75,7 +102,14 @@ export default function PostBlog() {
             </ul>
           )}
 
-          <CustomUploadImage label="Banner Image" onChange={handleChange("bannerImage")} />
+          <CustomUploadImage label="Banner Image" name="bannerImage" onChange={handleChange("bannerImage")} />
+          {previewBannerImages && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600">Image Preview:</p>
+              <img src={previewBannerImages} alt="Uploaded Preview" className="mt-2 mb-2 w-64 h-64 object-cover rounded-md border border-gray-300" />
+            </div>
+          )}
+
           <CustomInput label="Heading One" type="text" placeholder="enter your title" onChange={handleChange("headingOne")} />
           <CustomTextarea
             label="Heading One Content Description"
@@ -105,7 +139,18 @@ export default function PostBlog() {
             </ul>
           )}
 
-          <CustomUploadImage label="Heading Two Images" onChange={handleChange("headingTwoImages")} />
+          <CustomUploadImage label="Heading Two Images" name="headingTwoImages" onChange={handleChange("headingTwoImages")} />
+          {previewHeadingTwoImages && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600">Image Preview:</p>
+              <img
+                src={previewHeadingTwoImages}
+                alt="Uploaded Preview"
+                className="mt-2 mb-2 w-64 h-64 object-cover rounded-md border border-gray-300"
+              />
+            </div>
+          )}
+
           <CustomUploadImage label="Gallery" />
           <div className="flex items-center space-x-4">
             <CustomInput label="Amenties" type="text" placeholder="amenities name" />
