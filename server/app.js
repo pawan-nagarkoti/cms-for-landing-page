@@ -3,11 +3,13 @@ const express = require("express");
 const connectToDB = require("./database/db");
 const landingPageRoute = require("./routes/landingpage-route");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

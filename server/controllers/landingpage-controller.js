@@ -4,7 +4,7 @@ const landingPage = require("../modal/landing-page");
 const getAllLandingPage = async (req, res) => {
   try {
     const getLandingPagesData = await landingPage.find({});
-    getLandingPagesData.map((v) => console.log(v));
+    // getLandingPagesData.map((v) => console.log(v));
     if (getLandingPagesData.length > 0) {
       return res.status(200).json({
         data: getLandingPagesData,
@@ -26,6 +26,7 @@ const getAllLandingPage = async (req, res) => {
 
 // Add landing pages
 const AddLandingPage = async (req, res) => {
+  // console.log(req.files);
   try {
     // Base URL for static files
     const baseUrl = `${req.protocol}://${req.get("host")}/uploads`;
@@ -43,12 +44,13 @@ const AddLandingPage = async (req, res) => {
 
     // Create GalleryImage documents
     // Handle gallery images
-    const galleryFiles = req.files.filter((f) => f.fieldname === "gallery");
+    const galleryFiles = req.files.filter((f, i) => /^gallery\[\d+\]$/.test(f.fieldname));
+    console.log("galleryFiles", galleryFiles);
+
     const galleryImagesArray = galleryFiles.map((file) => ({
       imageUrl: `${baseUrl}/${file.filename}`,
       // createdAt: new Date(),
     }));
-    console.log(galleryFiles);
     const amenitiesData = [];
     // Extract amenities text from req.body
     const amenitiesText = req.body.amenities;
