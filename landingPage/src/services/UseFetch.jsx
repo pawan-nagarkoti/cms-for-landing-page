@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useFetch = (url, options = {}) => {
+const useFetch = (url, landingPageId = "", options = {}) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,9 @@ const useFetch = (url, options = {}) => {
     const fetchData = async () => {
       setLoading(true); // Set loading to true before fetching data
       try {
-        const response = await fetch(url, options);
+        // const response = await fetch(url, options);
+        const response = await fetch(`${url}/${landingPageId}`, options);
+        // const response = await fetch("http://localhost:3000/landing-page/single-landing-page/6780c561a23bd48842199450");
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
