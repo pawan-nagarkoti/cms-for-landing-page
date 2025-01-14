@@ -7,9 +7,10 @@ export default function landingPage() {
   const { data, error, loading } = useFetch(URL, LANDINGPAGE_ID);
   if (loading) return <Loading />;
   if (error) return <p>Error: {error}</p>;
+
   return (
     <>
-      <Header />
+      <Header logo={data?.data?.logo} menuItems={data?.data?.headerItem} />
       <Banner />
       <HeadingOne />
       <HeadingTwo />

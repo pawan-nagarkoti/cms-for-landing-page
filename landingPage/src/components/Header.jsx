@@ -1,29 +1,27 @@
 import React from "react";
 
-export default function Header() {
+export default function Header({ logo = "", menuItems = [] }) {
+  console.log(menuItems);
   return (
     <header className="bg-white shadow">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <div className="text-2xl font-bold text-blue-600">
-            <a href="/">MyWebsite</a>
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16">
+              <img src={logo} alt="Website Logo" className="w-full h-full rounded-full object-cover" />
+            </div>
+            <h1 className="text-lg font-semibold">Website Logo</h1>
           </div>
 
           {/* Navigation Links */}
           <nav className="hidden md:flex space-x-6">
-            <a href="#" className="text-gray-600 hover:text-blue-500 transition duration-300">
-              Home
-            </a>
-            <a href="#about" className="text-gray-600 hover:text-blue-500 transition duration-300">
-              About
-            </a>
-            <a href="#services" className="text-gray-600 hover:text-blue-500 transition duration-300">
-              Services
-            </a>
-            <a href="#contact" className="text-gray-600 hover:text-blue-500 transition duration-300">
-              Contact
-            </a>
+            {menuItems.length > 0 &&
+              menuItems[0].split(",")?.map((v, i) => (
+                <a href="#" key={i} className="text-gray-600 hover:text-blue-500 transition duration-300">
+                  {v}
+                </a>
+              ))}
           </nav>
 
           {/* Mobile Menu Button */}
