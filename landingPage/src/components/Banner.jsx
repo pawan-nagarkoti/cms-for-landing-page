@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-export default function Banner() {
+export default function Banner({ bannerImage = "" }) {
   return (
     <section
       className="relative bg-cover bg-center h-screen"
       style={{
-        backgroundImage: "url('https://via.placeholder.com/1920x1080')", // Replace with your image URL
+        backgroundImage: `url(${bannerImage})`,
       }}
     >
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>

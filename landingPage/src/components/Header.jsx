@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function Header({ logo = "", menuItems = [] }) {
-  console.log(menuItems);
   return (
     <header className="bg-white shadow">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
