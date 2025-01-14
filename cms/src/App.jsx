@@ -1,6 +1,14 @@
 import React from "react";
-import PostBlog from "./pages/PostBlog";
+import { BlogTable, PostBlog } from "./pages";
+import { Route, Routes } from "react-router-dom";
 
 export default function App() {
-  return <PostBlog />;
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<BlogTable />} />
+        <Route path="/landing-page-form" element={<PostBlog />} />
+      </Routes>
+    </>
+  );
 }
