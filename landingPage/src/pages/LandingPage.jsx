@@ -13,7 +13,7 @@ export default function landingPage() {
       <Banner bannerImage={data?.data?.bannerImage} />
       <HeadingOne heading={data?.data?.headingOne} description={data?.data?.headingOneDescription} />
       <HeadingTwo heading={data?.data?.headingTwo} image={data?.data?.headingTwoImage} list={data?.data?.headingTwoList} />
-      <Galllery />
+      <Galllery galleryData={data?.data?.gallery} />
       <Amenities amenitiesData={data?.data?.amenities} />
       <Footer />
     </>
