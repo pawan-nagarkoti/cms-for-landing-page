@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CustomInput, CustomTextarea, CustomUploadImage } from "../components";
 import { _get, _post } from "../services/api";
 import { convertBlobUrlsToBinary, convertSingleBlobUrlToBinary } from "../services/helper";
+import { useNavigate } from "react-router-dom";
 
 export default function PostBlog() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ export default function PostBlog() {
     gallery: null,
     amenities: "",
     theme: "",
+    landingPageName: "",
   });
   const [navItem, setNavItem] = useState(null);
   const [navitemList, setNavItemList] = useState([]);
@@ -32,6 +34,8 @@ export default function PostBlog() {
   const [amenitiesText, setAmenitiesText] = useState("");
   const [amenitiesImage, setAmenitiesImage] = useState("");
   const [amenitiesData, setAmenitiesData] = useState([]);
+
+  const navigate = useNavigate();
 
   const handleChange = (key) => (e) => {
     switch (e.target.name) {
@@ -85,20 +89,26 @@ export default function PostBlog() {
       pageFormData.append("themeColor", formData.theme);
       pageFormData.append("headerItem", formData.headerMenu);
       pageFormData.append("headingTwoList", formData.listing);
+      pageFormData.append("landingPageName", formData.landingPageName);
 
       binaryGallery.forEach((file, index) => {
         pageFormData.append(`gallery[${index}]`, file);
       });
 
-      formData.amenities.forEach(async (file, index) => {
-        pageFormData.append(`amenities[${index}][text]`, file.amenitiesText);
-        // Append amenities image after converting blob URL to a File
-        const binaryFile = await convertSingleBlobUrlToBinary(URL.createObjectURL(file.amenitiesImage));
-        pageFormData.append(`amenities[${index}][image]`, binaryFile);
-      });
+      // Process amenities with Promise.all
+      const processedAmenities = await Promise.all(
+        formData.amenities.map(async (file, index) => {
+          const binaryFile = await convertSingleBlobUrlToBinary(URL.createObjectURL(file.amenitiesImage));
+          return { ...file, binaryImage: binaryFile };
+        })
+      );
 
-      await _get("/landing-page");
+      processedAmenities.forEach((file, index) => {
+        pageFormData.append(`amenities[${index}][text]`, file.amenitiesText);
+        pageFormData.append(`amenities[${index}][image]`, file.binaryImage);
+      });
       await _post("/landing-page/add", pageFormData);
+      navigate("/");
     } catch (error) {
       console.log(error.message);
     }
@@ -131,6 +141,8 @@ export default function PostBlog() {
         <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-800 my-6">Landing Page Post</h1>
 
         <form onSubmit={handleSubmit}>
+          <CustomInput label="Landing Page Name" type="text" placeholder="enter your landing page name" onChange={handleChange("landingPageName")} />
+
           <CustomUploadImage label="Logo" name="logo" onChange={handleChange("logo")} />
           {previewLogoImages && (
             <div className="mt-4">

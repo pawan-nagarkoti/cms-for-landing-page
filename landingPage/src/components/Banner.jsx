@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default function Banner({ bannerImage = "" }) {
+export default function Banner({ bannerImage = "", textColor = "" }) {
   return (
     <section
       className="relative bg-cover bg-center h-screen"
@@ -21,6 +21,7 @@ export default function Banner({ bannerImage = "" }) {
           <a
             href="#learn-more"
             className="ml-4 px-8 py-3 text-blue-600 bg-white border border-blue-600 rounded-md shadow hover:bg-blue-100 transition duration-300"
+            style={{ background: textColor }}
           >
             Learn More
           </a>

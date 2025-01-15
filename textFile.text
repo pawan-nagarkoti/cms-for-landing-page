@@ -1,0 +1,5 @@
+// clone landing page
+cp -R ./landingPage ./landingPage_clone
+
+// update landing page env ID
+(Get-Content .env) -replace '^VITE_LANDING_PAGE_ID=.*', 'VITE_LANDING_PAGE_ID=678775db6e4d521676d2d88d' | Set-Content .env

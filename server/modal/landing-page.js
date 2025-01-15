@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const LandingPageSchema = new mongoose.Schema({
+  landingPageName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   logo: {
     type: String,
     required: true,

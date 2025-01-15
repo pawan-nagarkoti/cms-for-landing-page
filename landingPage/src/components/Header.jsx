@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Header({ logo = "", menuItems = [] }) {
+export default function Header({ logo = "", menuItems = [], textColor = "" }) {
   return (
     <header className="bg-white shadow">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -10,14 +10,16 @@ export default function Header({ logo = "", menuItems = [] }) {
             <div className="w-16 h-16">
               <img src={logo} alt="Website Logo" className="w-full h-full rounded-full object-cover" />
             </div>
-            <h1 className="text-lg font-semibold">Website Logo</h1>
+            <h1 className="text-lg font-semibold" style={{ color: textColor }}>
+              Website Logo
+            </h1>
           </div>
 
           {/* Navigation Links */}
           <nav className="hidden md:flex space-x-6">
             {menuItems.length > 0 &&
               menuItems[0].split(",")?.map((v, i) => (
-                <a href="#" key={i} className="text-gray-600 hover:text-blue-500 transition duration-300">
+                <a href="#" key={i} className="text-gray-600 hover:text-blue-500 transition duration-300 text-2xl" style={{ color: textColor }}>
                   {v}
                 </a>
               ))}

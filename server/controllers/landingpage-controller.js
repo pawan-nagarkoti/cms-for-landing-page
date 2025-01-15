@@ -31,8 +31,8 @@ const AddLandingPage = async (req, res) => {
     // Base URL for static files
     const baseUrl = `${req.protocol}://${req.get("host")}/uploads`;
 
-    const { headerItem, headingOne, headingOneDescription, headingTwo, headingTwoList, themeColor } = req.body;
-
+    const { headerItem, headingOne, headingOneDescription, headingTwo, headingTwoList, themeColor, landingPageName } = req.body;
+    console.log("boddddd", landingPageName);
     const logoData = req.files.find((f) => f.fieldname === "logo")?.filename;
     const logo = `${baseUrl}/${logoData}`;
 
@@ -45,7 +45,7 @@ const AddLandingPage = async (req, res) => {
     // Create GalleryImage documents
     // Handle gallery images
     const galleryFiles = req.files.filter((f, i) => /^gallery\[\d+\]$/.test(f.fieldname));
-    console.log("galleryFiles", galleryFiles);
+    // console.log("galleryFiles", galleryFiles);
 
     const galleryImagesArray = galleryFiles.map((file) => ({
       imageUrl: `${baseUrl}/${file.filename}`,
@@ -70,6 +70,7 @@ const AddLandingPage = async (req, res) => {
     }
 
     const newLandingPageAdded = await landingPage.create({
+      landingPageName,
       headerItem,
       headingOne,
       headingOneDescription,
@@ -82,6 +83,8 @@ const AddLandingPage = async (req, res) => {
       gallery: galleryImagesArray,
       amenities: amenitiesData,
     });
+
+    console.log(newLandingPageAdded?.landingPageName);
     res.status(201).json({
       status: true,
       data: newLandingPageAdded,
